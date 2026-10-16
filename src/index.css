@@ -1,0 +1,1029 @@
+/* 家庭运动视频库 —— 全局样式
+ * 目标用户：60+ 的安卓手机用户，单手操作、视力偏弱。
+ * 方案：固定一套深色高对比配色（不用 prefers-color-scheme 抖动，避免老人误以为界面变了），
+ * 正文 ≥ 16px、标题 ≥ 20px，所有可点元素最小 44×44px。
+ */
+
+:root {
+  color-scheme: dark;
+
+  --bg: #0b1220;
+  --bg-raised: #16203a;
+  --bg-sunken: #080d18;
+  --line: #5a6b90; /* 卡片边框等 UI 组件边界：对 --bg-raised 3.03:1、对 --bg 3.51:1，
+                    满足 WCAG 1.4.11「非文本对比度 ≥3:1」（原 #4a5878 只有 2.27:1，
+                    视力偏弱的用户分不清卡片边界）。改这里等于全站边框一起提亮。 */
+  --line-strong: #8ea0c4;
+
+  --text: #f7f9ff;
+  --text-muted: #cdd7ec;
+  --text-faint: #a9b6d3;
+
+  --accent: #ffd166;
+  --accent-ink: #1a1200;
+  --focus: #7dd3fc;
+
+  --ok-bg: #14532d;
+  --ok-ink: #d7f9e3;
+  --warn-bg: #7a2e0e;
+  --warn-ink: #ffe0c2;
+  --err-bg: #7f1d1d;
+  --err-ink: #ffd9d9;
+
+  --radius: 14px;
+  --tap: 44px;
+  --pad: 16px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+body {
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+  font-family: system-ui, -apple-system, 'PingFang SC', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0 0 8px;
+  line-height: 1.3;
+  font-size: 22px;
+}
+
+h1 {
+  font-size: 26px;
+}
+
+h2 {
+  font-size: 22px;
+}
+
+h3 {
+  font-size: 20px;
+}
+
+p {
+  margin: 0 0 12px;
+}
+
+a {
+  color: var(--focus);
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+}
+
+.app-shell__header {
+  padding: calc(12px + env(safe-area-inset-top, 0px)) var(--pad) 12px;
+  background: var(--bg-sunken);
+  border-bottom: 2px solid var(--line);
+}
+
+/* 标题行：标题 + 右侧 trailing（「共 N 个」），同一行、两块等高。
+   align-items: baseline 让「共 N 个」的文字底部与标题文字底部齐平 ——
+   这是中文排版里看起来「是一行」的关键，比 align-items:center 更自然。 */
+.app-shell__head-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.app-shell__header h1 {
+  margin: 0;
+}
+
+/* 与 h1 同字号同粗细（26px / 700）—— 两者是同一行的同级信息，不是主次关系。
+   行高也跟 h1 的 line-height 一样，否则基线对齐时两块文字会一高一低。 */
+.app-shell__count {
+  flex: 0 0 auto;
+  margin: 0;
+  color: var(--text);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.app-shell__subtitle {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-size: 16px;
+}
+
+.app-shell__main {
+  flex: 1;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  /* 底部要给固定导航留出空间：.app-nav 高 62px（8px padding ×2 + 44px 触控高 + 2px 边框）
+     + 手势条安全区，再留 16px 余量。原来只有 var(--pad)=16px，最后一行内容被导航
+     盖住约 46px（验收 D-4）。 */
+  padding: var(--pad) var(--pad) calc(78px + env(safe-area-inset-bottom, 0px));
+}
+
+/* 播放页 showNav={false}，没有固定导航，不需要留那 78px。
+   浏览器不支持 :has() 时整条规则被忽略，退回「多 78px 空白」，不会出问题。 */
+.app-shell:not(:has(> .app-nav)) .app-shell__main {
+  padding-bottom: var(--pad);
+}
+
+.app-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+  background: var(--bg-sunken);
+  border-top: 2px solid var(--line);
+  z-index: 30;
+}
+
+.app-nav a {
+  flex: 1;
+  min-height: var(--tap);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 8px;
+  border-radius: var(--radius);
+  border: 2px solid var(--line);
+  background: var(--bg-raised);
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.app-nav a[aria-current='page'] {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+
+/* ---------- 按钮 ---------- */
+
+/* display 必须显式声明：<button> 默认 inline-block，min-height 生效；
+ * 但 <a>（首页「继续播放」就是 Link → <a class="btn">）默认 inline，
+ * min-height 与纵向 padding 对 inline 盒**完全无效** —— 按钮被文字的行盒压扁，
+ * 视觉上盖在上面的进度条和标题上（首页播放键覆盖内容的根因）。
+ * inline-flex 让两种标签都拿到真正的 44px 高、padding 也各归各位。 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap);
+  min-width: var(--tap);
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  border: 2px solid var(--line-strong);
+  background: var(--bg-raised);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  font-size: 17px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.btn--primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+
+.btn--quiet {
+  background: transparent;
+}
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ---------- 状态提示 ---------- */
+
+.status {
+  border: 2px solid var(--line-strong);
+  border-radius: var(--radius);
+  padding: 16px;
+  background: var(--bg-raised);
+}
+
+.status--error {
+  border-color: var(--err-ink);
+  background: var(--err-bg);
+  color: var(--err-ink);
+}
+
+.status h2 {
+  margin-top: 0;
+  color: inherit;
+}
+
+.status p {
+  margin: 0 0 12px;
+}
+
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.skeleton {
+  height: 220px;
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+  border: 2px solid var(--line);
+}
+
+/* ---------- 视频卡片 ---------- */
+
+.video-grid {
+  display: grid;
+  /* 150px 这个下限是双列的前提：筛选页主区被左侧分类栏占掉 76px 后只剩 285px，
+     150×2 + 12 = 312px > 285px，`auto-fill` 就会退化成单列（真机实测：筛选页
+     一屏只能看 1 个视频）。118px 下 118×2 + 12 = 248px < 285px → 稳定两列。
+     首页主区是整宽（393 − 32 = 361px），118px 的下限也照样排两列。 */
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: 12px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+/* 首页末尾的「目录更新于 …」：原来是个 .tag 药丸，占一行高度还像一条视频。
+   改成一行淡灰小字，不干扰卡片。 */
+.catalog-updated {
+  margin: 16px 0 0;
+  color: var(--text-faint);
+  font-size: 14px;
+}
+
+/* ---------- 练习历史 ---------- */
+
+/*
+ * 每条记录 = 封面缩略 + 标题 + 标签 + 进度条 + 时间。
+ * 整行可点（Link），续播目标带在 href 上：点一下直接接着上次的位置练。
+ * 「删除」是独立按钮，不在 Link 里面 —— 嵌套可点元素在 HTML 里非法，
+ * 而且点删除时不该顺手跳进播放页。
+ */
+.history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.history-item {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+  overflow: hidden;
+}
+
+.history-item__main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  gap: 12px;
+  padding: 10px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.history-item__thumb {
+  position: relative;
+  flex: 0 0 auto;
+  width: 64px;
+  /* 3:4 = 封面盒比例；写死高度而不是 aspect-ratio 是为了不给这层再加一个高度来源 */
+  height: 85px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #1d2a45;
+}
+
+.history-item__img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.history-item__placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 20px;
+}
+
+.history-item__duration {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  padding: 1px 5px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.78);
+  color: #fff;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.history-item__body {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: center;
+}
+
+.history-item__title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.3;
+  /* 两行截断：历史里标题再长也不该把一条记录撑成五行 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.history-item__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.history-item__meta {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* 进度条复用首页 .progress 的样式，这里只收窄高度（历史行比卡片矮） */
+.history-item .progress {
+  height: 8px;
+  margin: 0;
+}
+
+.history-item__remove {
+  flex: 0 0 auto;
+  align-self: center;
+  /* 触控高度仍锁 44px（红线） */
+  min-height: var(--tap);
+  min-width: var(--tap);
+  margin-right: 6px;
+  padding: 4px 10px;
+  border-radius: 10px;
+  border: 2px solid var(--line-strong);
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.video-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  min-height: var(--tap);
+}
+
+.video-card--unavailable {
+  opacity: 0.55;
+  border-style: dashed;
+  border-color: var(--line);
+  cursor: not-allowed;
+}
+
+.video-card--unavailable .video-card__title {
+  text-decoration: line-through;
+}
+
+/* 封面比例：3:4（竖版），不是 16:9。
+ *
+ * 素材实测（scripts/.out/videos-h264/.thumbs，ffmpeg 逐行取亮度量出来的）：
+ *   缩略图统一 480×1094（≈9:20.5 竖版），内部有两种形态：
+ *     A 类 约一半：横版画面被 letterbox 到竖版画布正中，内容带只占 y=441..652（19% 高）
+ *     B 类 约一半：满幅竖版录屏，人物在 y≈250..700，下半是播放器 UI
+ * object-fit: cover 在这些比例下都是「按宽度缩放」（容器高宽比 ≤ 2.28），
+ * 所以人物在封面里的显示大小与比例无关，比例只决定「裁掉多少」+「卡片多高」：
+ *   16:9  → 只留 24.7% 高（y 412..682）：A 类刚好卡在内容带上，但 B 类只剩腰腿
+ *   3:4   → 留 58% 高（y 227..867）：A 类内容带完整，B 类头到膝完整，没有一次切脸
+ *   9:16  → 留 78% 高：B 类最好，但 171px 宽的卡片会高到 304px，一屏只剩 1.6 行
+ * 取 3:4：两类素材都不切脸，卡片约 350px，一屏能看到 2 行（4 个封面），比 16:9 的
+ * 1 行翻倍，也比 9:16 强。真正想彻底消灭 A 类的黑边，要改缩略图生成端
+ * （scripts/prepare-videos.mjs 的 thumbnail，改成 16:9 letterbox 输出），不在前端。
+ */
+.video-card__thumb {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  /* 必须有：子元素全是 position:absolute（下面），但漏网之鱼（比如未来加的一层
+     wrapper）一旦有内容高度就会把 aspect-ratio 顶掉，封面退回源图 480:1094 的
+     389px 高、整卡 533px、一屏 1 行。overflow:hidden 是这条契约的兜底闸门。 */
+  overflow: hidden;
+  background: #1d2a45;
+}
+
+/* 绝对定位而不是 width/height:100%：容器的唯一高度来源必须是 aspect-ratio。
+   100% 在 auto 高度容器上会回退成 auto，按图片固有比例（480:1094）把容器撑到 389px，
+   这就是 P0-1「写了 aspect-ratio:16/9 却渲染成 171×389」的真正根因。 */
+.video-card__img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-card__placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px;
+  background: linear-gradient(160deg, #23324f, #131c30);
+  color: var(--text-muted);
+  font-size: 15px;
+  text-align: center;
+}
+
+.video-card__placeholder-icon {
+  font-size: 30px;
+  line-height: 1;
+}
+
+.video-card__duration {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.78);
+  color: #fff;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+.video-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 10px 12px;
+}
+
+.video-card__title {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: #101a2e;
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.tag--muted {
+  background: var(--warn-bg);
+  border-color: var(--warn-ink);
+  color: var(--warn-ink);
+  font-weight: 700;
+}
+
+/* 4 个字的类型标签在卡片/播放页/历史页的药丸里也竖排两行，保持全站一致。
+ * line-height 收到 1.05、字号降到 14px，两行加起来仍低于 44px，
+ * 不会把药丸撑成两倍高、把卡片网格压到首屏以下。 */
+.tag--two-line {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 7px;
+  font-size: 14px;
+  line-height: 1.05;
+}
+
+/* 等级徽标（K1–K5）。
+ *
+ * K1–K5 是同一条难度轴上的五档，所以只分**三组**颜色而不是五档五色：
+ * 视力偏弱的用户分不清 #e0a 级别的色差，五种颜色只会变成「分不清哪档更狠」，
+ * 三组（容易 / 中等 / 难）才是他真能用上的信息量。
+ * 复用 --ok-* / --warn-* / --err-* 三个已通过 WCAG AA 对比度校验的变量组。 */
+.level {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 2px solid;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.level--easy {
+  background: var(--ok-bg);
+  color: var(--ok-ink);
+  border-color: var(--ok-ink);
+}
+
+.level--mid {
+  background: var(--warn-bg);
+  color: var(--warn-ink);
+  border-color: var(--warn-ink);
+}
+
+.level--hard {
+  background: var(--err-bg);
+  color: var(--err-ink);
+  border-color: var(--err-ink);
+}
+
+/* 理论上 UI 永远不会走到这里（catalog.ts 已把 level 收敛成 `Level | null`，
+   null 时组件整块不渲染）。留着是为了万一有脏数据漏进来，
+   也不会被当成一个「已标注」的等级显示出去。 */
+.level--unset {
+  background: transparent;
+  color: var(--text-muted);
+  border-color: var(--line-strong);
+  border-style: dashed;
+}
+
+/* ---------- 上次训练 ---------- */
+
+.resume-card {
+  border: 3px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.resume-card h2 {
+  margin-top: 0;
+}
+
+.resume-card__title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.progress {
+  width: 100%;
+  height: 14px;
+  border-radius: 999px;
+  background: #0f1830;
+  border: 2px solid var(--line-strong);
+  overflow: hidden;
+  margin: 0 0 8px;
+}
+
+.progress__bar {
+  height: 100%;
+  background: var(--accent);
+}
+
+.resume-card__meta {
+  color: var(--text-muted);
+  font-size: 16px;
+  margin: 0 0 12px;
+}
+
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+/* ---------- 筛选页 ---------- */
+
+/*
+ * 筛选页布局（产品决定 2026-09-28，两次调整后的最终形态）：
+ *
+ *   ┌──────────────────────────────────────┐
+ *   │  等级 K1–K5      ← 铺满整行         │
+ *   │  时长 4 档        ← 铺满整行         │
+ *   │  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━     │  ← 分割线
+ *   ├──┬───────────────────────────────────┤
+ *   │全部│  视频结果（双列）                 │
+ *   │有氧│                                  │
+ *   └────┴───────────────────────────────────┘
+ *
+ * 关键点：**左侧分类栏从分割线才开始**，上方整块宽度让给两行胶囊。
+ * 这是必要的而不是偏好：主区被左栏挤到 285px 时，4 颗时长标签
+ * （最宽的「16-30min」约 78px + padding + 边框）总宽约 302px > 285px，
+ * 必然放不下一行。让出左栏那 76px 之后每行都能铺满、标签等宽。
+ *
+ * 「铺满」的实现是 `.chip { flex: 1 1 0 }`（在 .chip-row 里等分整行），
+ * 不是靠调 padding 凑出来的 —— padding 只影响内容居中，不影响分配比例。
+ *
+ * 左栏是 grid 第一列，天生就在分割线下方，不需要 position:fixed + 手工 padding
+ * 去对齐 —— 那种写法会因为 .app-shell__main 的 padding 算错而在栏与卡片之间
+ * 留下一条缝（真机实测 22px）。
+ */
+.find-layout {
+  display: grid;
+  /* 两行胶囊横跨整行；分割线以下才是「左栏 + 结果」两列。
+     用 grid 而不是 position:fixed + padding-left 手工让位：
+     手工算 padding 要同时知道 .app-shell__main 的 padding 和左栏宽度与偏移，
+     任何一处变了就错位（真机实测曾出现栏与卡片之间空 22px 的缝）。 */
+  grid-template-areas:
+    'level    level'
+    'duration duration'
+    'rail     main';
+  grid-template-columns: var(--rail-width) minmax(0, 1fr);
+  column-gap: 8px;
+  /* 行间距全部由各行自己的 margin 承担（等级行 0 / 时长行 margin-top 4 + border +
+     margin-bottom 10），grid 不再插手 —— grid 的 row-gap 与子元素 margin 会叠加，
+     叠加出来的值无法从单处推断，改一次就要重新量真机。 */
+  row-gap: 0;
+  align-items: start;
+  --rail-width: 64px;
+}
+
+/* 两行胶囊：铺满整行，每颗等分 */
+.chip-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 4px;
+}
+
+.chip-row--level {
+  grid-area: level;
+}
+
+.chip-row--duration {
+  grid-area: duration;
+  /* 分割线：横跨整行，把「筛选条件」和「结果」分开。
+     画在**时长行自己的 border-bottom** 上，而不是 grid 伪元素 ——
+     伪元素落在第三行行顶时会被 row-gap 推离正确位置，实测导致分割线消失、
+     左栏顶到胶囊下面。border-bottom 跟着内容走，位置永远正确。 */
+  border-bottom: 2px solid var(--line);
+  /* 与上一行（等级行）之间的间距 */
+  margin-top: 4px;
+  /* 分割线**下方**的留白（属于「线到左栏/结果」之间的间距，不是 padding：
+     padding 画在 border 之内，不会把线推远） */
+  margin-bottom: 10px;
+}
+
+/*
+ * 左侧常驻分类栏：13 项（全部 + 12 个类型）竖排，占 grid 第一列。
+ * 13 项 = 13×44 + 12×6 = 644px，比 8 项时高出一截 —— .type-rail 的
+ * max-height + overflow-y:auto 兜底（超矮视口才出现滚动条），
+ * 常规手机视口下仍能一屏看完，但**已不是「铺满一屏」的布局**，改动前请真机量一次。
+ */
+.type-rail {
+  grid-area: rail;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  min-width: 0;
+  /* 兜底：视口特别矮时 8 项放不下（8×44 + 7×6 = 394px），
+     滚动条藏起来 —— 留滚动能力，不留视觉噪音。 */
+  max-height: calc(100dvh - var(--rail-offset) - 78px - env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.type-rail::-webkit-scrollbar {
+  display: none;
+}
+
+.type-rail__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* 分类栏每一项。触控高度锁 --tap（红线，60+ 的手指要点得中），
+   横向内边距压到 6px：64px 宽的栏里放两个中文字（16px × 2 + 字间距 ≈ 36px）刚好。 */
+.type-rail__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap);
+  min-width: var(--tap);
+  width: 100%;
+  padding: 6px;
+  border-radius: 12px;
+  border: 2px solid var(--line-strong);
+  background: var(--bg-raised);
+  color: var(--text);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.type-rail__item[aria-pressed='true'] {
+  background: var(--focus);
+  border-color: var(--focus);
+  color: var(--accent-ink);
+}
+
+/* 4 个字的类型标签（上肢力量 / 下肢力量 / 全身力量）竖排两行。
+ * 64px 宽的栏里放不下 4 个字，横排会被 overflow:hidden 截成「上肢…」。
+ * 触控高度仍然是 --tap(44px) —— 两行文字靠压行高和字号塞进去，不动触控区。 */
+.type-rail__item--two-line {
+  flex-direction: column;
+  line-height: 1.05;
+  font-size: 15px;
+  padding: 4px 2px;
+  white-space: normal;
+}
+
+.find-main {
+  grid-area: main;
+  min-width: 0;
+}
+
+/* 胶囊按钮。触控高度锁 --tap(44px)（a11y 红线，60+ 的手指要点得中），
+   flex:1 让每颗在 .chip-row 里等分整行宽度（「铺满」的实现点）。 */
+.chip {
+  display: inline-flex;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap);
+  min-width: 0;
+  padding: 4px 6px;
+  border-radius: 999px;
+  border: 2px solid var(--line-strong);
+  background: var(--bg-sunken);
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.chip[aria-pressed='true'] {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  font-weight: 700;
+}
+
+/* K1–K5 都是两个字符，天然等宽，不需要额外宽度也不覆盖 .chip 的 flex:1。 */
+.chip--level {
+  font-weight: 700;
+}
+
+@media (min-width: 900px) {
+  /* 桌面端左栏宽一档：96px 才放得下 17px 字号的两字标签 */
+  .find-layout {
+    --rail-width: 96px;
+  }
+
+  /* 桌面端左栏宽一档，grid 第一列跟着变宽即可，不再需要手工 padding。 */
+}
+
+/* ---------- 播放页 ---------- */
+
+/*
+ * 播放器的取景框：按视频**真实比例**铺，而不是写死 16/9。
+ *
+ * 背景（实测，见本文件 .video-card__thumb 那段说明）：全库 130 个转码产物
+ * 100% 是 1080×2460 的竖版（约 9:20.5）。旧写法 `aspect-ratio: 16/9` +
+ * `width: 100%` + `object-fit: contain` 在 393px 宽的手机上把盒子算成
+ * 361×203，1080 宽的竖版画面 contain 进去只剩 89×203 —— **横向利用率 25%**，
+ * 左右各一大片黑。竖版素材配横版容器，必然两侧留黑。
+ *
+ * 策略（方案 A：真实比例 + 视口高度上限，宽度跟着一起缩）：
+ *   --player-ratio 由 VideoPlayer.tsx 在 loadedmetadata 时用真实的
+ *   videoWidth / videoHeight 写入（形如 `1080 / 2460`）；metadata 还没到时
+ *   退回 16/9 兜底，绝不塌成 0 高。
+ *
+ *   为什么是「高度封顶、宽度跟着缩」而不是「宽度铺满、高度封顶」：
+ *   后者（`width: 100%` + `max-height`）会让盒子的宽高比与内容不一致，
+ *   contain 之后又要在左右补黑 —— 正是要修的那个毛病，等于白改。
+ *   这里改成 `height: min(...)` + `width: auto`，浏览器按 aspect-ratio
+ *   从高度反推宽度：竖版 1080×2460 在 851px 高的视口下取 80dvh = 681px 高，
+ *   宽度自动收成 681×1080/2460 = **299px**，盒子比例 == 内容比例，
+ *   contain 与 cover 视觉等价，画面**零黑边**，控制条也永远在盒内不被裁切。
+ *
+ *   为什么用 80dvh：Android Chrome 的地址栏/导航栏会吃掉可视高度，
+ *   dvh 是"动态视口高度"，能跟着地址栏收起而变化，不会算出比实际可放区域
+ *   更高的盒子。取 80 而不是 100，是给标题栏和页面顶部留出余量，
+ *   保证「点开视频 → 一屏内看到画面 + 控制条」，不需要先滚动。
+ *
+ *   横屏 / 桌面：同一套规则自动降级。横屏时视口高度小，80dvh 得到的盒子
+ *   变矮变窄但比例仍然正确，绝不会「撑太夸张」；桌面（≥900px）另外用
+ *   媒体查询放宽到 88dvh 并居中，两侧留白由页面背景承担。
+ */
+.player__frame {
+  position: relative;
+  /* 真实比例由 JS 写入；这个兜底值只在 metadata 尚未到达的那一瞬间生效 */
+  --player-ratio: 16 / 9;
+  --player-max-h: 80dvh;
+  aspect-ratio: var(--player-ratio);
+  /* 从高度反推宽度：盒子比例恒等于内容比例 → contain 不产生黑边 */
+  height: min(var(--player-max-h), calc(100dvh - 2px));
+  width: auto;
+  max-width: 100%;
+  /* metadata 未到达时（readyState=0）按兜底比例给一个可见高度，不塌成 0 */
+  min-height: 160px;
+  margin: 0 auto 16px;
+  background: #000;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.player__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* 比例匹配时 contain 与 cover 等价；选 contain 是因为它是"绝不裁切"的那一侧：
+     万一某天出现比例没同步上的素材，contain 只是留黑边，cover 会把画面切掉。 */
+  object-fit: contain;
+  background: #000;
+}
+
+.player__notice {
+  border: 2px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 17px;
+}
+
+.player__title {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.player__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.player__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.path-details {
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  color: var(--text-faint);
+  font-size: 15px;
+}
+
+.path-details summary {
+  min-height: var(--tap);
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+.path-details code {
+  word-break: break-all;
+  font-size: 14px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 桌面（≥900px）：竖版视频在宽屏上按 86dvh 取景，仍然是真实比例、仍然无黑边，
+   只是盒子居中、两侧由页面背景留白。上限同时用 vh 兜住不支持 dvh 的老浏览器。
+   86 而不是 88：实测 1280×900 下 88dvh 会让盒子底边落到 901px，正好超出视口 1px，
+   控制条会被切掉一丝。 */
+@media (min-width: 900px) {
+  .player__frame {
+    --player-max-h: 86dvh;
+    height: min(86dvh, 86vh);
+  }
+}
+
+/* 手机横屏（视口很矮）：80dvh 会让盒子底边落到视口外 31px，原生控制条被切掉。
+   竖版视频在横屏里本来就只能是一个很窄的竖条（全高也只有 ~172px 宽），
+   所以这里选择"完整可见"而不是"尽量大"：控制条被切是功能问题，
+   播放器小只是观感问题（用户还可以点原生全屏按钮）。
+   68 而不是 72：实测 740×360 这种最窄的横屏下，72dvh 的底边仍会超出视口 9px；
+   页面头部固定占 109px，在 360px 高的视口里就吃掉 30%，这是根本约束。 */
+@media (orientation: landscape) and (max-height: 600px) {
+  .player__frame {
+    --player-max-h: 68dvh;
+    height: min(68dvh, 68vh);
+  }
+}
+
+
+.empty-hint {
+  border: 2px dashed var(--line-strong);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

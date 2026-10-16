@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#111827" />
+    <meta name="description" content="妹妹的听书小屋：整理和播放本地有声内容。" />
+    <title>妹妹的听书小屋</title>
+
+    <!--
+      「添加到主屏幕」用。本服务跑在局域网 HTTP 上（非安全上下文），
+      service worker 注册不了，所以这不是一个完整 PWA：
+      给不了离线缓存，多数手机只会落成一个普通快捷方式。
+      manifest 的作用是让这个快捷方式有名字和图标，不再是一张灰色默认图。
+    -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="妹妹的听书小屋" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <script>
+      /*
+       * 启动看门狗。
+       *
+       * React 挂不上时，#root 会一直是空的，用户看到的就是一片白 ——
+       * 这是最糟的失败模式：60+ 的人不会知道出事了，更不会知道该找谁。
+       * 所以在这里先放一个纯手写的兜底，8 秒后如果 React 还没把内容画进
+       * #root，就直接把中文提示画上去。
+       *
+       * 三条纪律：
+       *   1. 绝不自动刷新。「一加载就崩」时自动 reload 会变成死循环，
+       *      把手机跑烫耗光电，用户看到的还是同一片空白。只给按钮，人点一次。
+       *   2. 挂载成功就完全不干预：show() 第一件事就是检查 #root 有没有内容。
+       *   3. 不引任何依赖。这是它必须内联在 HTML 里的原因 ——
+       *      如果打包的 JS 根本没下载下来，外部脚本也就一起没了。
+       */
+      ;(function () {
+        var TIMEOUT = 8000
+        var root = document.getElementById('root')
+        if (!root) return
+
+        function show() {
+          // React 已经画上东西了（或已经显示过提示）：什么都不做。
+          if (root.firstChild) return
+
+          var box = document.createElement('div')
+          box.className = 'status status--error'
+          box.setAttribute('role', 'alert')
+
+          var title = document.createElement('h2')
+          title.textContent = '页面没能打开'
+          box.appendChild(title)
+
+          var lines = [
+            '可能是没连上家里的 Wi-Fi，也可能是页面没加载完。',
+            '请先点下面的按钮重新加载一次；还不行就请家里人帮忙看一下。',
+          ]
+          for (var i = 0; i < lines.length; i++) {
+            var p = document.createElement('p')
+            p.textContent = lines[i]
+            box.appendChild(p)
+          }
+
+          var row = document.createElement('div')
+          row.className = 'btn-row'
+          var btn = document.createElement('button')
+          btn.type = 'button'
+          btn.className = 'btn btn--primary'
+          btn.textContent = '重新加载'
+          // 只在用户点下去时刷新一次，不做任何自动重试。
+          btn.addEventListener('click', function () {
+            window.location.reload()
+          })
+          row.appendChild(btn)
+          box.appendChild(row)
+
+          root.appendChild(box)
+        }
+
+        window.setTimeout(show, TIMEOUT)
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
