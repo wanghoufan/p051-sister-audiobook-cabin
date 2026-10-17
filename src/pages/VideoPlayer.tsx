@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { AppShell } from '../components/AppShell'
 import { useCatalog } from '../components/catalog-context'
@@ -85,7 +85,7 @@ export function VideoPlayer() {
 
   // 切视频时把比例退回 CSS 兜底值（16/9）。新视频的 loadedmetadata 会立刻覆盖它，
   // 但在那一小段窗口里留着上一个视频的比例会让新视频先被错误地拉伸一次。
-  useEffect(() => {
+  useLayoutEffect(() => {
     frameRef.current?.style.removeProperty('--player-ratio')
   }, [video?.id])
 

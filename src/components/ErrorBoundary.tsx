@@ -14,6 +14,7 @@
  */
 
 import { Component, type ErrorInfo, type ReactNode } from 'react'
+import i18n from '../audio/i18n'
 
 interface ErrorBoundaryProps {
   children: ReactNode
@@ -33,7 +34,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   componentDidCatch(error: Error, info: ErrorInfo): void {
     // 留着 console 是为了真出问题时还能在 chrome://inspect 里看到原因；
     // 用户看到的仍然是下面那句中文提示。
-    console.error('[家庭运动视频库] 页面渲染出错：', error, info.componentStack)
+    console.error('[听书小屋] 页面渲染出错：', error, info.componentStack)
   }
 
   private readonly reload = () => {
@@ -46,12 +47,12 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
     return (
       <div className="status status--error" role="alert">
-        <h2>页面出错了</h2>
-        <p>这个页面没能正常打开。请点下面的按钮重新加载一次。</p>
-        <p>如果刷新好几次还是这样，请告诉家里人帮忙看一下。</p>
+        <h2>{i18n.t('crashTitle')}</h2>
+        <p>{i18n.t('crashText')}</p>
+        <p>{i18n.t('crashHelp')}</p>
         <div className="btn-row">
           <button type="button" className="btn btn--primary" onClick={this.reload}>
-            重新加载
+            {i18n.t('reload')}
           </button>
         </div>
       </div>

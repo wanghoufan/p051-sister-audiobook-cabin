@@ -11,6 +11,8 @@
 
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import i18n from '../../src/audio/i18n'
+beforeEach(()=>{void i18n.changeLanguage('zh-CN')})
 import { ErrorBoundary } from '../../src/components/ErrorBoundary'
 
 /** 一定会在渲染里抛错的组件（render 阶段抛出，会被 ErrorBoundary 接住）。 */
@@ -125,4 +127,12 @@ describe('ErrorBoundary：刷新只能由人点，绝不自动重试', () => {
     expect(button).toHaveAttribute('type', 'button')
     consoleError.mockRestore()
   })
+})
+
+it('崩溃恢复提示随应用英语设置显示', async()=>{
+ const {default:i18n}=await import('../../src/audio/i18n')
+ await i18n.changeLanguage('en')
+ const silent=vi.spyOn(console,'error').mockImplementation(()=>{})
+ try{render(<ErrorBoundary><Boom/></ErrorBoundary>);expect(screen.getByRole('alert')).toHaveTextContent('Reload')}
+ finally{silent.mockRestore();await i18n.changeLanguage('zh-CN')}
 })

@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react'
 import { render } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { App } from '../../src/App'
+import { LegacyVideoApp as App } from '../../src/LegacyVideoApp'
 import { CatalogProvider } from '../../src/components/CatalogProvider'
 import type { CatalogResponse, Video } from '../../src/lib/types'
 import { LAST_TRAINING_KEY } from '../../src/lib/last-training'

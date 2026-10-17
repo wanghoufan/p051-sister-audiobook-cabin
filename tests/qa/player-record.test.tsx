@@ -16,7 +16,7 @@ import React, { StrictMode } from 'react'
 import { MemoryRouter, useNavigate } from 'react-router-dom'
 import type { NavigateFunction } from 'react-router-dom'
 
-import { App } from '../../src/App'
+import { LegacyVideoApp as App } from '../../src/LegacyVideoApp'
 import { CatalogProvider } from '../../src/components/CatalogProvider'
 import { LAST_TRAINING_KEY } from '../../src/lib/last-training'
 import type { CatalogResponse, Video } from '../../src/lib/types'

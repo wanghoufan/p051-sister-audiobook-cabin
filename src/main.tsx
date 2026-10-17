@@ -17,3 +17,12 @@ createRoot(container).render(
     </ErrorBoundary>
   </StrictMode>,
 )
+
+// Install only in production: the generated worker pins this build's shell assets.
+if (import.meta.env.PROD && 'serviceWorker' in navigator && window.isSecureContext) {
+  window.addEventListener('load', () => {
+    void navigator.serviceWorker.register('/sw.js', { type: 'module', updateViaCache: 'none' }).catch(() => {
+      console.warn('离线功能暂不可用，请联网刷新后重试。')
+    })
+  })
+}

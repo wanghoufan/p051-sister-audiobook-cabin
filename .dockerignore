@@ -1,0 +1,19 @@
+# 构建上下文排除表（docker 部署副本与开发目录通用）
+.git
+.gitignore
+.trae
+node_modules
+dist
+# 私有数据与生成物，绝不进镜像
+兴趣测试
+catalog
+docs
+temp
+*.log
+*.tsbuildinfo
+coverage
+__pycache__
+.DS_Store
+README*.md
+AGENTS.md
+*.png

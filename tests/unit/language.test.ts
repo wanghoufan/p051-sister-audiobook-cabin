@@ -1,0 +1,3 @@
+import {expect,test,vi} from 'vitest'
+import {systemLanguage} from '../../src/audio/i18n'
+test.each([['ko-KR','zh-CN'],['ru-RU','zh-CN'],['th-TH','zh-CN'],['zh-TW','zh-CN'],['en-GB','en']])('unsupported system language %s resolves predictably',async(lang,expected)=>{const original=Object.getOwnPropertyDescriptor(globalThis,'navigator');Object.defineProperty(globalThis,'navigator',{value:{language:lang},configurable:true});try{expect(systemLanguage()).toBe(expected)}finally{if(original)Object.defineProperty(globalThis,'navigator',original);else Reflect.deleteProperty(globalThis,'navigator');vi.unstubAllGlobals()}})

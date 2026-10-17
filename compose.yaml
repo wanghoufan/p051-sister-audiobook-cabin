@@ -1,0 +1,40 @@
+# 听书小屋（audiobook-hut）Compose 定义
+# 依据：docs/sop/docker.md §4.2 / §4.3
+# 真实值只放同目录下的 .env.local（不提交）；本文件只引用变量。
+name: ${COMPOSE_PROJECT_NAME:-audiobook-hut}
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ${IMAGE_TAG:-audiobook-hut:0.1.0}
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    environment:
+      HOST: 0.0.0.0
+      APP_PORT: 8792
+      AUDIO_ROOT: /audio
+    ports:
+      # 手机需经局域网访问，故绑定 0.0.0.0
+      - "${APP_PORT:-8792}:8792"
+    volumes:
+      # 真实业务文件只放 DockerData；宿主机目录必须预先存在
+      - "${APP_DATA_DIR:?APP_DATA_DIR 未设置}/audio:/audio:ro"
+      - "${APP_DATA_DIR:?APP_DATA_DIR 未设置}/catalog:/app/catalog:ro"
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:8792/api/courses').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

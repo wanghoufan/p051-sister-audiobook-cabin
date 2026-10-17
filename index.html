@@ -3,16 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#111827" />
+    <meta name="theme-color" content="#5266bd" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icon-192.png" type="image/png" />
+    <meta name="robots" content="noindex, nofollow" />
     <meta name="description" content="妹妹的听书小屋：整理和播放本地有声内容。" />
     <title>妹妹的听书小屋</title>
 
-    <!--
-      「添加到主屏幕」用。本服务跑在局域网 HTTP 上（非安全上下文），
-      service worker 注册不了，所以这不是一个完整 PWA：
-      给不了离线缓存，多数手机只会落成一个普通快捷方式。
-      manifest 的作用是让这个快捷方式有名字和图标，不再是一张灰色默认图。
-    -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="妹妹的听书小屋" />
@@ -35,10 +32,9 @@
        */
       ;(function () {
         var TIMEOUT = 8000
-        var root = document.getElementById('root')
-        if (!root) return
-
         function show() {
+          var root = document.getElementById('root')
+          if (!root) return
           // React 已经画上东西了（或已经显示过提示）：什么都不做。
           if (root.firstChild) return
 
@@ -46,11 +42,17 @@
           box.className = 'status status--error'
           box.setAttribute('role', 'alert')
 
+          var language = 'zh-CN'
+          try {
+            var choice = window.localStorage.getItem('p51.language') || 'FOLLOW_SYSTEM'
+            language = choice === 'en' || (choice === 'FOLLOW_SYSTEM' && window.navigator.language.toLowerCase().indexOf('en') === 0) ? 'en' : 'zh-CN'
+          } catch (ignored) {}
+          var english = language === 'en'
           var title = document.createElement('h2')
-          title.textContent = '页面没能打开'
+          title.textContent = english ? 'This page could not open' : '页面没能打开'
           box.appendChild(title)
 
-          var lines = [
+          var lines = english ? ['Check your home Wi-Fi and reload the page.', 'If it still fails, ask a family member for help.'] : [
             '可能是没连上家里的 Wi-Fi，也可能是页面没加载完。',
             '请先点下面的按钮重新加载一次；还不行就请家里人帮忙看一下。',
           ]
@@ -65,7 +67,7 @@
           var btn = document.createElement('button')
           btn.type = 'button'
           btn.className = 'btn btn--primary'
-          btn.textContent = '重新加载'
+          btn.textContent = english ? 'Reload' : '重新加载'
           // 只在用户点下去时刷新一次，不做任何自动重试。
           btn.addEventListener('click', function () {
             window.location.reload()
